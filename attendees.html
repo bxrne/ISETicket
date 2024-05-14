@@ -237,7 +237,7 @@
 				}
 			});
 
-			$("#TK_returnBtn").click(function(){
+			$("#TK_returnBtn").click(function() {
 				$(".TK_walletDetails").css("display", "none");  // hide optional wallet details (manual entry)
 				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
 				let walletAddress = $("#TK_walletDetailsAddress").val();
@@ -292,7 +292,12 @@
 						web3.eth.sendSignedTransaction(signed .rawTransaction).on("receipt", receipt => {
 							console.log(receipt);
 						});
+					});
+				} else {
+					$("#TK_error").css("display", "none");
+				}
 			});
+		
 
 			$("#CW_button").click(function () {	
 				let walletPassword = $("#CW_walletPassword").val();
