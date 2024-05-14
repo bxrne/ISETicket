@@ -27,7 +27,6 @@
 		</div>
 	</nav>
 	<div class="container">
-		
 			<section class="section" id="tickets">
 				<nav class="panel is-success">
 					<p class="panel-heading">Tickets</p>
@@ -50,7 +49,7 @@
 					<div class="panel-block TK_walletDetails">
 						<p class="control">
 							<label class="label">Private Key</label>
-							<input class="input" type="text" placeholder="Private Key" id="TK_walletDetailsPrivateKey" />
+							<input class="input" type="password" placeholder="Private Key" id="TK_walletDetailsPrivateKey" />
 						</p>
 					</div>
 
@@ -74,29 +73,29 @@
 					<p class="control">
 						<label class="label">Wallet Address</label>
 						<input class="input" type="text" placeholder="Wallet address"
-							id="walletAddress" />
-						<i class="has-text-danger px-4 py-2" id="walletAddressError"
+							id="CB_walletAddress" />
+						<i class="has-text-danger px-4 py-2" id="CB_error"
 							style="display: none">Invalid wallet address</i>
 					</p>
 				</div>
 
-				<div class="panel-block" id="checkBalanceResult">
+				<div class="panel-block CB_result">
 					<p class="control">
 						<label class="label">Balance (SETH)</label>
-						<input class="input" type="text" id="checkBalanceSETHResult" readonly
+						<input class="input" type="text" id="CB_sethResult" readonly
 							disabled />
 					</p>
 				</div>
-				<div class="panel-block" id="checkBalanceResult">
+				<div class="panel-block CB_result">
 					<p class="control">
 						<label class="label">Ticket Balance (ISETicket)</label>
-						<input class="input" type="text" id="checkBalanceATResult" readonly
+						<input class="input" type="text" id="CB_ticketResult" readonly
 							disabled />
 					</p>
 				</div>
 
 				<div class="panel-block">
-					<button class="button is-info is-fullwidth" onclick="checkBalance()">
+					<button class="button is-info is-fullwidth" id="CB_btn">
 						Check
 					</button>
 				</div>
@@ -141,12 +140,29 @@
 
 	</div>
 
+	<script src="config.js"></script>
 	<script>
 		$(document).ready(function () {
 			let web3 = new Web3("https://rpc2.sepolia.org");
 
 			$(".createWalletResult").css("display", "none");
 			$(".TK_walletDetails").css("display", "none");
+			$(".CB_result").css("display", "none");
+
+			$("#CB_btn").click(function () {
+				let walletAddress = $("#CB_walletAddress").val();
+				let contract = new web3.eth.Contract(ABI, contractAddress);
+
+				contract.methods.balanceOf(walletAddress).call().then(balance => {
+					$("#CB_ticketResult").val(balance);
+				});
+
+				web3.eth.getBalance(walletAddress).then(balance => {
+					$("#CB_sethResult").val(web3.utils.fromWei(balance, "ether"));
+				});
+
+				$(".CB_result").css("display", "block");
+			});
 
 			$("#TK_enterWalletDetails").click(function () { // toggle optional wallet details (manual entry)
 				$("#TK_walletDetailsAddress").val("");
@@ -160,43 +176,127 @@
 			});
 
 			$("#TK_buyBtn").click(function () {
+				$(".TK_walletDetails").css("display", "none");  // hide optional wallet details (manual entry)
 				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
 				let walletAddress = $("#TK_walletDetailsAddress").val();
 				let walletPrivateKey = $("#TK_walletDetailsPrivateKey").val();
 
-				// No details provided
 				if (!walletKeystore && walletAddress === "" && walletPrivateKey === "") {
 					$("#TK_error").css("display", "block");
-					return;
+					return; // No details provided
 				} else if (walletKeystore && walletAddress === "" && walletPrivateKey === "") {
 					let reader = new FileReader();
 					reader.onload = function (e) {
 						let privateKey = JSON.parse(e.target.result).privateKey;
 						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
-						
-						// Buy ticket
-						
+						let contract = new web3.eth.Contract(ABI, contractAddress);
+
+						let transaction = contract.methods.transfer(wallet.address, web3.utils.toWei("0.01", "ether"));
+						let encodedABI = transaction.encodeABI();
+						let tx = {
+							from: wallet.address,
+							to: contractAddress,
+							data: encodedABI,
+							gas: 21608,
+							value: web3.utils.toWei("0.01", "ether"),
+							contractAddress:contractAddress
+
+						};
+
+						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
+							web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
+								console.log(receipt);
+							});
+						});
 					}
 					reader.readAsText(walletKeystore);
 				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
-					console.log("Not implemented");
+					let wallet = web3.eth.accounts.privateKeyToAccount(walletPrivateKey);
+					let contract = new web3.eth.Contract(ABI, contractAddress);
+
+					let transaction = contract.methods.transfer(wallet.address, web3.utils.toWei("0.01", "ether"));
+					let encodedABI = transaction.encodeABI();
+					let tx = {
+						from: wallet.address,
+						to: contractAddress,
+						data: encodedABI,
+						gas: 21608,
+						value: web3.utils.toWei("0.01", "ether"),
+						contractAddress: contractAddress
+
+					};
+
+					web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
+						web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
+							console.log(receipt);
+						});
+					});
+					
 				} else {
 					$("#TK_error").css("display", "none");
 				}
-
-			
-
-
-
-		
 			});
 
+			$("#TK_returnBtn").click(function(){
+				$(".TK_walletDetails").css("display", "none");  // hide optional wallet details (manual entry)
+				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
+				let walletAddress = $("#TK_walletDetailsAddress").val();
+				let walletPrivateKey = $("#TK_walletDetailsPrivateKey").val();
 
+				if (!walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+					$("#TK_error").css("display", "block");
+					return; // No details provided
+				} else if (walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+					let reader = new FileReader();
+					reader.onload = function (e) {
+						let privateKey = JSON.parse(e.target.result).privateKey;
+						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
+						let contract = new web3.eth.Contract(ABI, contractAddress);
 
-			$("#CW_button").click(function () {	// Create a wallet
+						let transaction = contract.methods.transfer(contractAddress, web3.utils.toWei("0.01", "ether"));
+						let encodedABI = transaction.encodeABI();
+						let tx = {
+							from: wallet.address,
+							to: contractAddress,
+							data: encodedABI,
+							gas: 21608,
+							value: web3.utils.toWei("0.01", "ether"),
+							contractAddress:contractAddress
+
+						};
+
+						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
+							web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
+								console.log(receipt);
+							});
+						});
+					}
+					reader.readAsText(walletKeystore);
+				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
+					let wallet = web3.eth.accounts.privateKeyToAccount(walletPrivateKey);
+					let contract = new web3.eth.Contract(ABI, contractAddress);
+
+					let transaction = contract.methods.transfer(contractAddress, web3.utils.toWei("0.01", "ether"));
+					let encodedABI = transaction.encodeABI();
+					let tx = {
+						from: wallet.address,
+						to: contractAddress,
+						data: encodedABI,
+						gas: 21608,
+						value: web3.utils.toWei("0.01", "ether"),
+						contractAddress: contractAddress
+
+					};
+
+					web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
+						web3.eth.sendSignedTransaction(signed .rawTransaction).on("receipt", receipt => {
+							console.log(receipt);
+						});
+			});
+
+			$("#CW_button").click(function () {	
 				let walletPassword = $("#CW_walletPassword").val();
 
-				// Password must be at least 8 characters long
 				if (walletPassword.length < 8) {
 					$("#walletPasswordError").css("display", "block");
 					return;
