@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="theme-light">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
+	<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+	<link rel="manifest" href="assets/site.webmanifest" />
+	<title>ISETicket</title>
+	<link rel="stylesheet" href="styles.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+</head>
+
+<body data-theme="light" class="theme-light">
+	<nav class="navbar" role="navigation" aria-label="main navigation">
+		<div class="navbar-brand p-4">
+			<a class="navbar-item" href="/index.html">
+				<img src="/assets/favicon-32x32.png" alt="Logo" height="32px" width="32px" />
+				<h4 class="is-size-4 has-text-weight-bold is-capitalized ml-2">
+					ISE Hackathons |
+					<span class="is-size-5 has-text-weight-normal is-capitalized">Attendees</span>
+				</h4>
+			</a>
+		</div>
+	</nav>
+	<div class="container">
+		
+			<section class="section" id="tickets">
+				<nav class="panel is-success">
+					<p class="panel-heading">Tickets</p>
+					<div class="panel-block">
+						<p class="control">
+							<label class="label">Load wallet from keystore</label>
+							<input class="input" type="file" id="TK_walletKeystore" placeholder="Keystore file" />
+						</p>
+					</div>
+					<div class="panel-block">
+						<a id="TK_enterWalletDetails">Enter details instead?</a>
+						<i class="has-text-danger px-4 py-2" id="TK_error" style="display: none">Incorrect wallet details</i>
+					</div>
+					<div class="panel-block TK_walletDetails">
+						<p class="control">
+							<label class="label">Wallet Address</label>
+							<input class="input" type="text" placeholder="Wallet Address" id="TK_walletDetailsAddress" />
+						</p>
+					</div>
+					<div class="panel-block TK_walletDetails">
+						<p class="control">
+							<label class="label">Private Key</label>
+							<input class="input" type="text" placeholder="Private Key" id="TK_walletDetailsPrivateKey" />
+						</p>
+					</div>
+
+					
+						
+					<div class="panel-block">
+						<button class="button is-success is-fullwidth ml-1" id="TK_buyBtn">
+							Buy ticket
+						</button>
+						<button class="button is-danger is-fullwidth ml-1" id="TK_returnBtn">
+							Return ticket
+						</button>
+					</div>
+				</nav>
+			</section>
+		</section>
+		<section class="section" id="checkBalance">
+			<nav class="panel is-info">
+				<p class="panel-heading">Check balance</p>
+				<div class="panel-block">
+					<p class="control">
+						<label class="label">Wallet Address</label>
+						<input class="input" type="text" placeholder="Wallet address"
+							id="walletAddress" />
+						<i class="has-text-danger px-4 py-2" id="walletAddressError"
+							style="display: none">Invalid wallet address</i>
+					</p>
+				</div>
+
+				<div class="panel-block" id="checkBalanceResult">
+					<p class="control">
+						<label class="label">Balance (SETH)</label>
+						<input class="input" type="text" id="checkBalanceSETHResult" readonly
+							disabled />
+					</p>
+				</div>
+				<div class="panel-block" id="checkBalanceResult">
+					<p class="control">
+						<label class="label">Ticket Balance (ISETicket)</label>
+						<input class="input" type="text" id="checkBalanceATResult" readonly
+							disabled />
+					</p>
+				</div>
+
+				<div class="panel-block">
+					<button class="button is-info is-fullwidth" onclick="checkBalance()">
+						Check
+					</button>
+				</div>
+			</nav>
+		</section>
+		<section class="section" id="createWallet">
+			<nav class="panel">
+				<p class="panel-heading">Create a wallet</p>
+				<div class="panel-block">
+					<p class="control">
+						<label class="label">Password</label>
+						<input class="input" type="password" placeholder="Wallet password" id="CW_walletPassword" />
+						<i class="has-text-danger px-4 py-2" id="walletPasswordError" style="display: none">Password must be at
+							least 8 characters long</i>
+					</p>
+				</div>
+				<div class="panel-block createWalletResult">
+					<p class="control">
+						<label class="label">Wallet address</label>
+						<input class="input" type="text" id="CW_walletAddress" readonly disabled />
+					</p>
+				</div>
+				<div class="panel-block createWalletResult">
+					<p class="control">
+						<label class="label">Private key</label>
+						<input class="input" type="text" id="CW_walletPrivateKey" readonly disabled />
+					</p>
+				</div>
+				<div class="panel-block createWalletResult">
+					<p class="control">
+						<label class="label">Keystore (<a id="CW_downloadKeystore">download</a>)</label>
+						<textarea class="textarea" rows="4" id="CW_walletKeystore" readonly disabled></textarea>
+					</p>
+				</div>
+				<div class="panel-block">
+					<button class="button is-dark is-fullwidth" id="CW_button">
+						Create wallet
+					</button>
+				</div>
+			</nav>
+		</section>
+
+	</div>
+
+	<script>
+		$(document).ready(function () {
+			let web3 = new Web3("https://rpc2.sepolia.org");
+
+			$(".createWalletResult").css("display", "none");
+			$(".TK_walletDetails").css("display", "none");
+
+			$("#TK_enterWalletDetails").click(function () { // toggle optional wallet details (manual entry)
+				$("#TK_walletDetailsAddress").val("");
+				$("#TK_walletDetailsPrivateKey").val("");
+
+				if ($(".TK_walletDetails").css("display") === "none") {
+					$(".TK_walletDetails").css("display", "block");
+				} else {
+					$(".TK_walletDetails").css("display", "none");
+				}
+			});
+
+			$("#TK_buyBtn").click(function () {
+				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
+				let walletAddress = $("#TK_walletDetailsAddress").val();
+				let walletPrivateKey = $("#TK_walletDetailsPrivateKey").val();
+
+				// No details provided
+				if (!walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+					$("#TK_error").css("display", "block");
+					return;
+				} else if (walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+					let reader = new FileReader();
+					reader.onload = function (e) {
+						let privateKey = JSON.parse(e.target.result).privateKey;
+						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
+						
+						// Buy ticket
+						
+					}
+					reader.readAsText(walletKeystore);
+				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
+					console.log("Not implemented");
+				} else {
+					$("#TK_error").css("display", "none");
+				}
+
+			
+
+
+
+		
+			});
+
+
+
+			$("#CW_button").click(function () {	// Create a wallet
+				let walletPassword = $("#CW_walletPassword").val();
+
+				// Password must be at least 8 characters long
+				if (walletPassword.length < 8) {
+					$("#walletPasswordError").css("display", "block");
+					return;
+				} else {
+					$("#walletPasswordError").css("display", "none");
+				}
+
+				let wallet = web3.eth.accounts.create(walletPassword);
+				$("#CW_walletAddress").val(wallet.address);
+				$("#CW_walletPrivateKey").val(wallet.privateKey);
+				$("#CW_walletKeystore").val(JSON.stringify(wallet));
+				$("#CW_walletPassword").val("");
+				$(".createWalletResult").css("display", "block");
+			});
+
+			$("#CW_downloadKeystore").click(function() {
+				let keystore = $("#CW_walletKeystore").val();
+				let blob = new Blob([keystore], {type: "text/plain;charset=utf-8"});
+				let url = window.URL.createObjectURL(blob);
+				let a = document.createElement("a");
+				a.href = url;
+				a.download = $("#CW_walletAddress").val() + ".json";
+				a.click();
+				$(".createWalletResult").css("display", "none");
+			});
+		});
+	</script>
+</body>
+
+</html>
