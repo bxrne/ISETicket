@@ -152,7 +152,7 @@
 	<script src="config.js"></script>
 	<script>
 		$(document).ready(function () {
-			let web3 = new Web3("https://rpc.sepolia.org");
+			let web3 = new Web3("https://rpc2.sepolia.org");
 
 			$(".createWalletResult").css("display", "none");
 			$(".TK_walletDetails").css("display", "none");
@@ -197,8 +197,6 @@
 					let reader = new FileReader();
 					reader.onload = function (e) {
 						let privateKey = JSON.parse(e.currentTarget.result)["privateKey"];
-						console.log(privateKey);
-						console.log(privateKey.length); // is 42
 						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 						let contract = new web3.eth.Contract(ABI, contractAddress);
 
@@ -259,18 +257,17 @@
 					let reader = new FileReader();
 					reader.onload = function (e) {
 						let privateKey = JSON.parse(e.target.result).privateKey;
-						console.log("private key", privateKey);
 						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 						let contract = new web3.eth.Contract(ABI, contractAddress);
 
-						let transaction = contract.methods.buyToken();
+						let transaction = contract.methods.sellToken(1);
 						let encodedABI = transaction.encodeABI();
+						
 						var tx = {
-							to: wallet.address,
-							from: contractAddress,
+							from: wallet.address,
+							to: contractAddress,
 							gas: 2000000,
 							data: encodedABI,
-							value: web3.utils.toWei(1, 'ether')
 						};
 
 						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
@@ -281,22 +278,21 @@
 					}
 					reader.readAsText(walletKeystore);
 				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
-					let wallet = web3.eth.accounts.privateKeyToAccount(walletPrivateKey);
+					let privateKey = JSON.parse(e.target.result).privateKey;
+					let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 					let contract = new web3.eth.Contract(ABI, contractAddress);
 
-					let transaction = contract.methods.transfer(contractAddress, web3.utils.toWei("0.01", "ether"));
+					let transaction = contract.methods.sellToken(1);
 					let encodedABI = transaction.encodeABI();
-					let tx = {
+
+					var tx = {
 						from: wallet.address,
 						to: contractAddress,
+						gas: 2000000,
 						data: encodedABI,
-						gas: 21608,
-						value: web3.utils.toWei("0.01", "ether"),
-						contractAddress: contractAddress
-
 					};
 
-					web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
+					web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
 						web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
 							console.log(receipt);
 						});
