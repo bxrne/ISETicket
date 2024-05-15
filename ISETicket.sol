@@ -142,6 +142,7 @@ contract ISETicket is IERC20 {
             _balances[msg.sender] >= amount,
             "Not enough tokens in your account!"
         );
+
         uint256 ethAmount = (amount / 10 ** uint256(decimals)) * 0.00001 ether;
         // Transfer the ETH to the sender
         payable(msg.sender).transfer(ethAmount);

@@ -1,6 +1,32 @@
-const contractAddress = "0xA3539B7fC7246396A1f07382d2625B1c4Ad825e5";
+const contractAddress = "0xa3539b7fc7246396a1f07382d2625b1c4ad825e5";
 
 const ABI = [
+	{
+		inputs: [
+			{
+				internalType: "string",
+				name: "_name",
+				type: "string",
+			},
+			{
+				internalType: "string",
+				name: "_symbol",
+				type: "string",
+			},
+			{
+				internalType: "uint8",
+				name: "_decimals",
+				type: "uint8",
+			},
+			{
+				internalType: "uint256",
+				name: "initialSupply",
+				type: "uint256",
+			},
+		],
+		stateMutability: "nonpayable",
+		type: "constructor",
+	},
 	{
 		anonymous: false,
 		inputs: [
@@ -113,6 +139,65 @@ const ABI = [
 				internalType: "uint256",
 				name: "",
 				type: "uint256",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "buyToken",
+		outputs: [],
+		stateMutability: "payable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "decimals",
+		outputs: [
+			{
+				internalType: "uint8",
+				name: "",
+				type: "uint8",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "name",
+		outputs: [
+			{
+				internalType: "string",
+				name: "",
+				type: "string",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "uint256",
+				name: "amount",
+				type: "uint256",
+			},
+		],
+		name: "returnToken",
+		outputs: [],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "symbol",
+		outputs: [
+			{
+				internalType: "string",
+				name: "",
+				type: "string",
 			},
 		],
 		stateMutability: "view",
