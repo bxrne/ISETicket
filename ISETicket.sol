@@ -121,4 +121,19 @@ contract ISETicket is IERC20 {
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
+
+    function buyToken() external payable {
+        require(
+            msg.value >= 0.00001 ether,
+            "Not enough ETH sent; check price!"
+        );
+
+        // Calculate the token amount. Here we're assuming 1 token for 0.00001 ETH.
+        // Adjust this if you want a different ratio.
+        uint256 tokenAmount = msg.value / 0.00001 ether;
+        // convert tokenAmount to wei
+        tokenAmount = tokenAmount * 10 ** uint256(decimals);
+        // Transfer the tokens to the sender
+        _transfer(address(this), msg.sender, tokenAmount);
+    }
 }

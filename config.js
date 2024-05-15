@@ -1,6 +1,32 @@
-const contractAddress = "0xbba055b26f9542b8b6cb64b3d81fcfe0418ed03b";
+const contractAddress = "0x9a0E5f603f16CAa186f2D6ee8d7c5712fBfE16f2";
 
 const ABI = [
+	{
+		inputs: [
+			{
+				internalType: "string",
+				name: "_name",
+				type: "string",
+			},
+			{
+				internalType: "string",
+				name: "_symbol",
+				type: "string",
+			},
+			{
+				internalType: "uint8",
+				name: "_decimals",
+				type: "uint8",
+			},
+			{
+				internalType: "uint256",
+				name: "initialSupply",
+				type: "uint256",
+			},
+		],
+		stateMutability: "nonpayable",
+		type: "constructor",
+	},
 	{
 		anonymous: false,
 		inputs: [
@@ -25,6 +51,61 @@ const ABI = [
 		],
 		name: "Approval",
 		type: "event",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "spender",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "amount",
+				type: "uint256",
+			},
+		],
+		name: "approve",
+		outputs: [
+			{
+				internalType: "bool",
+				name: "",
+				type: "bool",
+			},
+		],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "buyToken",
+		outputs: [],
+		stateMutability: "payable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
+				name: "recipient",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "amount",
+				type: "uint256",
+			},
+		],
+		name: "transfer",
+		outputs: [
+			{
+				internalType: "bool",
+				name: "",
+				type: "bool",
+			},
+		],
+		stateMutability: "nonpayable",
+		type: "function",
 	},
 	{
 		anonymous: false,
@@ -55,6 +136,35 @@ const ABI = [
 		inputs: [
 			{
 				internalType: "address",
+				name: "sender",
+				type: "address",
+			},
+			{
+				internalType: "address",
+				name: "recipient",
+				type: "address",
+			},
+			{
+				internalType: "uint256",
+				name: "amount",
+				type: "uint256",
+			},
+		],
+		name: "transferFrom",
+		outputs: [
+			{
+				internalType: "bool",
+				name: "",
+				type: "bool",
+			},
+		],
+		stateMutability: "nonpayable",
+		type: "function",
+	},
+	{
+		inputs: [
+			{
+				internalType: "address",
 				name: "owner",
 				type: "address",
 			},
@@ -79,30 +189,6 @@ const ABI = [
 		inputs: [
 			{
 				internalType: "address",
-				name: "spender",
-				type: "address",
-			},
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-		],
-		name: "approve",
-		outputs: [
-			{
-				internalType: "bool",
-				name: "",
-				type: "bool",
-			},
-		],
-		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "address",
 				name: "account",
 				type: "address",
 			},
@@ -120,6 +206,45 @@ const ABI = [
 	},
 	{
 		inputs: [],
+		name: "decimals",
+		outputs: [
+			{
+				internalType: "uint8",
+				name: "",
+				type: "uint8",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "name",
+		outputs: [
+			{
+				internalType: "string",
+				name: "",
+				type: "string",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
+		name: "symbol",
+		outputs: [
+			{
+				internalType: "string",
+				name: "",
+				type: "string",
+			},
+		],
+		stateMutability: "view",
+		type: "function",
+	},
+	{
+		inputs: [],
 		name: "totalSupply",
 		outputs: [
 			{
@@ -129,59 +254,6 @@ const ABI = [
 			},
 		],
 		stateMutability: "view",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "address",
-				name: "recipient",
-				type: "address",
-			},
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-		],
-		name: "transfer",
-		outputs: [
-			{
-				internalType: "bool",
-				name: "",
-				type: "bool",
-			},
-		],
-		stateMutability: "nonpayable",
-		type: "function",
-	},
-	{
-		inputs: [
-			{
-				internalType: "address",
-				name: "sender",
-				type: "address",
-			},
-			{
-				internalType: "address",
-				name: "recipient",
-				type: "address",
-			},
-			{
-				internalType: "uint256",
-				name: "amount",
-				type: "uint256",
-			},
-		],
-		name: "transferFrom",
-		outputs: [
-			{
-				internalType: "bool",
-				name: "",
-				type: "bool",
-			},
-		],
-		stateMutability: "nonpayable",
 		type: "function",
 	},
 ];
