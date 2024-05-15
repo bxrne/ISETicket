@@ -136,4 +136,16 @@ contract ISETicket is IERC20 {
         // Transfer the tokens to the sender
         _transfer(address(this), msg.sender, tokenAmount);
     }
+
+    function sellToken(uint256 amount) external {
+        require(
+            _balances[msg.sender] >= amount,
+            "Not enough tokens in your account!"
+        );
+        uint256 ethAmount = (amount / 10 ** uint256(decimals)) * 0.00001 ether;
+        // Transfer the ETH to the sender
+        payable(msg.sender).transfer(ethAmount);
+        // Transfer the tokens to the contract
+        _transfer(msg.sender, address(this), amount);
+    }
 }
