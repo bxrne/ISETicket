@@ -260,7 +260,7 @@
 						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 						let contract = new web3.eth.Contract(ABI, contractAddress);
 
-						let transaction = contract.methods.sellToken(1);
+						let transaction = contract.methods.returnToken(1);
 						let encodedABI = transaction.encodeABI();
 						
 						var tx = {
@@ -282,7 +282,7 @@
 					let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 					let contract = new web3.eth.Contract(ABI, contractAddress);
 
-					let transaction = contract.methods.sellToken(1);
+					let transaction = contract.methods.returnToken(1);
 					let encodedABI = transaction.encodeABI();
 
 					var tx = {
