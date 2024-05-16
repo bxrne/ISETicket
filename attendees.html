@@ -27,7 +27,7 @@
 		</div>
 	</nav>
 	<div class="container">
-		<section class="section" id="tickets">
+		<section class="section">
 			<nav class="panel is-success">
 				<p class="panel-heading">Tickets</p>
 				<div class="panel-block">
@@ -38,7 +38,7 @@
 					</p>
 				</div>
 				<div class="panel-block">
-					<a id="TK_enterWalletDetails">Enter details instead?</a>
+					<a id="TK_enterWalletDetails">Enter details instead &darr;</a>
 					<i class="has-text-danger px-4 py-2" id="TK_error"
 						style="display: none">Incorrect wallet details</i>
 				</div>
@@ -56,9 +56,6 @@
 							id="TK_walletDetailsPrivateKey" />
 					</p>
 				</div>
-
-
-
 				<div class="panel-block">
 					<button class="button is-success is-fullwidth ml-1" id="TK_buyBtn">
 						Buy ticket
@@ -66,11 +63,12 @@
 					<button class="button is-danger is-fullwidth ml-1" id="TK_returnBtn">
 						Return ticket
 					</button>
+				
 				</div>
 			</nav>
 		</section>
 		</section>
-		<section class="section" id="checkBalance">
+		<section class="section">
 			<nav class="panel is-info">
 				<p class="panel-heading">Check balance</p>
 				<div class="panel-block">
@@ -104,7 +102,7 @@
 				</div>
 			</nav>
 		</section>
-		<section class="section" id="createWallet">
+		<section class="section">
 			<nav class="panel">
 				<p class="panel-heading">Create a wallet</p>
 				<div class="panel-block">
@@ -148,7 +146,28 @@
 		</section>
 
 	</div>
+	<button class="js-modal-trigger" data-target="modal-js-example">
+		Open JS example modal
+	</button>
+	<div class="modal is-active">
+		<div class="modal-background"></div>
+		<div class="modal-card">
+			<header class="modal-card-head has-background-danger">
+				<p class="modal-card-title has-text-white">Error</p>
+				<button class="delete" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<p id="errorModalText" class="is-size-4">Please provide wallet details</p>
+			</section>
+			<footer class="modal-card-foot">
+				<i>Ensure to enable JS and allow for all Web3 nodes to index your transactions
+</i>
+			</footer>
+		</div>
+	</div>
 
+
+	<script src="modal.js"></script>
 	<script src="config.js"></script>
 	<script>
 		$(document).ready(function () {
@@ -156,6 +175,7 @@
 
 			$(".createWalletResult").css("display", "none");
 			$(".TK_walletDetails").css("display", "none");
+			$("#TK_error").css("display", "none");
 			$(".CB_result").css("display", "none");
 
 			$("#CB_btn").click(function () {
@@ -176,6 +196,8 @@
 			$("#TK_enterWalletDetails").click(function () { // toggle optional wallet details (manual entry)
 				$("#TK_walletDetailsAddress").val("");
 				$("#TK_walletDetailsPrivateKey").val("");
+				$("#TK_error").css("display", "none");
+
 
 				if ($(".TK_walletDetails").css("display") === "none") {
 					$(".TK_walletDetails").css("display", "block");
@@ -186,46 +208,37 @@
 
 			$("#TK_buyBtn").click(function () {
 				$(".TK_walletDetails").css("display", "none");  // hide optional wallet details (manual entry)
+				$("#TK_error").css("display", "none");
+
 				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
 				let walletAddress = $("#TK_walletDetailsAddress").val();
 				let walletPrivateKey = $("#TK_walletDetailsPrivateKey").val();
 
 				if (!walletKeystore && walletAddress === "" && walletPrivateKey === "") {
-					$("#TK_error").css("display", "block");
-					return; // No details provided
-				} else if (walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+					$("#errorModal").addClass("is-active");
+					$("#errorModalText").text("Please provide wallet details");
+				}
+
+				let wallet;
+
+				if (walletKeystore) {
 					let reader = new FileReader();
 					reader.onload = function (e) {
 						let privateKey = JSON.parse(e.currentTarget.result)["privateKey"];
-						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
-						let contract = new web3.eth.Contract(ABI, contractAddress);
-
-						let transaction = contract.methods.buyToken();
-						let encodedABI = transaction.encodeABI();
-
-						var tx = {
-							from: wallet.address,
-							to: contractAddress,
-							gas: 2000000,
-							data: encodedABI,
-							value: web3.utils.toWei(tokenAmount, 'ether'), // 1 ticket
-						};					
-
-						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
-							web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
-								console.log(receipt);
-							});
-						});
-					}
+						wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
+						sendTransaction(wallet, privateKey);
+					};
 					reader.readAsText(walletKeystore);
-				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
-					let wallet = web3.eth.accounts.privateKeyToAccount(walletPrivateKey);
-					let contract = new web3.eth.Contract(ABI, contractAddress);
+				} else if (walletAddress !== "" && walletPrivateKey !== "") {
+					wallet = web3.eth.accounts.privateKeyToAccount(walletPrivateKey);
+					sendTransaction(wallet, walletPrivateKey);
+				}
 
+				function sendTransaction(wallet, privateKey) {
+					let contract = new web3.eth.Contract(ABI, contractAddress);
 					let transaction = contract.methods.buyToken();
 					let encodedABI = transaction.encodeABI();
-
-					var tx = {
+					let tx = {
 						from: wallet.address,
 						to: contractAddress,
 						gas: 2000000,
@@ -233,19 +246,23 @@
 						value: web3.utils.toWei(tokenAmount, 'ether'), // 1 ticket
 					};
 
-					web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
+					web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
 						web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
 							console.log(receipt);
+						}).catch(error => {
+							$("#errorModal").addClass("is-active");
+							$("#errorModalText").text(error);
 						});
+					}).catch(error => {
+						$("#errorModal").addClass("is-active");
+						$("#errorModalText").text(error);
 					});
-
-				} else {
-					$("#TK_error").css("display", "none");
 				}
 			});
 
+
 			$("#TK_returnBtn").click(function () {
-				$(".TK_walletDetails").css("display", "none");  // hide optional wallet details (manual entry)
+				$(".TK_walletDetails").css("display", "none"); // hide optional wallet details (manual entry)
 				let walletKeystore = $("#TK_walletKeystore")[0].files[0];
 				let walletAddress = $("#TK_walletDetailsAddress").val();
 				let walletPrivateKey = $("#TK_walletDetailsPrivateKey").val();
@@ -253,32 +270,24 @@
 				if (!walletKeystore && walletAddress === "" && walletPrivateKey === "") {
 					$("#TK_error").css("display", "block");
 					return; // No details provided
-				} else if (walletKeystore && walletAddress === "" && walletPrivateKey === "") {
+				}
+
+				let privateKey;
+				if (walletKeystore) {
 					let reader = new FileReader();
 					reader.onload = function (e) {
-						let privateKey = JSON.parse(e.target.result).privateKey;
-						let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
-						let contract = new web3.eth.Contract(ABI, contractAddress);
-
-						let transaction = contract.methods.returnToken(1);
-						let encodedABI = transaction.encodeABI();
-						
-						var tx = {
-							from: wallet.address,
-							to: contractAddress,
-							gas: 2000000,
-							data: encodedABI,
-						};
-
-						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
-							web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
-								console.log(receipt);
-							});
-						});
-					}
+						privateKey = JSON.parse(e.target.result).privateKey;
+						sendTransaction(privateKey);
+					};
 					reader.readAsText(walletKeystore);
-				} else if (!walletKeystore && walletAddress !== "" && walletPrivateKey !== "") {
-					let privateKey = JSON.parse(e.target.result).privateKey;
+				} else if (walletAddress !== "" && walletPrivateKey !== "") {
+					privateKey = walletPrivateKey;
+					sendTransaction(privateKey);
+				} else {
+					$("#TK_error").css("display", "none");
+				}
+
+				function sendTransaction(privateKey) {
 					let wallet = web3.eth.accounts.privateKeyToAccount(privateKey);
 					let contract = new web3.eth.Contract(ABI, contractAddress);
 
@@ -295,10 +304,14 @@
 					web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
 						web3.eth.sendSignedTransaction(signed.rawTransaction).on("receipt", receipt => {
 							console.log(receipt);
+						}).catch(error => {
+							$("#errorModal").addClass("is-active");
+							$("#errorModalText").text(error);
 						});
+					}).catch(error => {
+						$("#errorModal").addClass("is-active");
+						$("#errorModalText").text(error);
 					});
-				} else {
-					$("#TK_error").css("display", "none");
 				}
 			});
 
