@@ -1,4 +1,5 @@
 const contractAddress = "0xa3539b7fc7246396a1f07382d2625b1c4ad825e5";
+const tokenAmount = "0.00001"; // ether
 
 const ABI = [
 	{

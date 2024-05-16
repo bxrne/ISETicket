@@ -208,7 +208,7 @@
 							to: contractAddress,
 							gas: 2000000,
 							data: encodedABI,
-							value: web3.utils.toWei("0.00001", 'ether'), // 1 ticket
+							value: web3.utils.toWei(tokenAmount, 'ether'), // 1 ticket
 						};					
 
 						web3.eth.accounts.signTransaction(tx, privateKey).then(signed => {
@@ -230,7 +230,7 @@
 						to: contractAddress,
 						gas: 2000000,
 						data: encodedABI,
-						value: web3.utils.toWei("0.00001", 'ether'), // 1 ticket
+						value: web3.utils.toWei(tokenAmount, 'ether'), // 1 ticket
 					};
 
 					web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
