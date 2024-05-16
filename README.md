@@ -33,5 +33,5 @@ python -m http.server 8000
 | Attendee | Buy ticket | Buy a ticket for an event |🟢|
 | Attendee | Check balances | Check ticket and SETH balances |🟢|
 | Attendee | Return ticket | Return a ticket for an event |🟢|
-| Doorman | Verify ticket | Verify the authenticity of a ticket |🚫|
+| Doorman | Verify ticket | Verify the authenticity of a ticket |🟢|
 | Venue | Monitor tickets | Monitor the distribution of tickets |🚫|
