@@ -1,0 +1,13 @@
+{
+	"name": "tests",
+	"version": "1.0.0",
+	"description": "E2E testing suite for ISETicket dApp",
+	"scripts": {
+		"test": "npx playwright test"
+	},
+	"author": "Adam Byrne",
+	"license": "ISC",
+	"devDependencies": {
+		"@playwright/test": "^1.44.1"
+	}
+}

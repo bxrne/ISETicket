@@ -343,7 +343,7 @@
 								web3.eth
 									.sendSignedTransaction(signed.rawTransaction)
 									.on("receipt", (receipt) => {
-										console.log(receipt);
+										alert("Ticket purchased successfully");
 									})
 									.catch((error) => {
 										$("#errorModal").addClass("is-active");
@@ -408,7 +408,7 @@
 								web3.eth
 									.sendSignedTransaction(signed.rawTransaction)
 									.on("receipt", (receipt) => {
-										console.log(receipt);
+										alert("Ticket returned successfully");
 									})
 									.catch((error) => {
 										$("#errorModal").addClass("is-active");
