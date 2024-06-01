@@ -41,14 +41,16 @@ npx playwright test -j 1
 
 *Note: Node.js is required to run the tests not the dApp. Also the wallet keystores are required.*
 
-| Test File | Description |
-| --- | --- |
-| [attendee_buy.spec.js](tests/attendee_buy.spec.js) | Tests for attendee buying a ticket |
-| [attendee_sell.spec.js](tests/attendee_sell.spec.js) | Tests for attendee selling a ticket |
-| [attendee_wallet.spec.js](tests/attendee_wallet.spec.js) | Tests for attendee wallet functionality |
-| [security.spec.js](tests/security.spec.js) | Test check tickets function |
-| [venue.spec.js](tests/venue.spec.js) | Tests for ticket distribution |
-
+| Test File | Test Case | Description |
+| --- | --- | --- |
+| [attendee_buy.spec.js](tests/attendee_buy.spec.js) | Buy token with keystore wallet | Tests for attendee buying a ticket with a keystore wallet |
+| [attendee_buy.spec.js](tests/attendee_buy.spec.js) | Buy token with manual entry wallet | Tests for attendee buying a ticket with a manually entered wallet |
+| [attendee_sell.spec.js](tests/attendee_sell.spec.js) | Return token with keystore wallet | Tests for attendee returning a ticket with a keystore wallet |
+| [attendee_sell.spec.js](tests/attendee_sell.spec.js) | Return token with manual entry wallet | Tests for attendee returning a ticket with a manually entered wallet |
+| [attendee_wallet.spec.js](tests/attendee_wallet.spec.js) | Creating a wallet | Tests for creating a wallet |
+| [attendee_wallet.spec.js](tests/attendee_wallet.spec.js) | Checking wallet balance | Tests for checking the balance of a wallet |
+| [security.spec.js](tests/security.spec.js) | Check wallet for ticket | Tests for checking a wallet for a ticket |
+| [venue.spec.js](tests/venue.spec.js) | Ticket distribution results | Tests for ticket distribution results |
 ## Features
 
 | Actor | Feature | Description | Status |
