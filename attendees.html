@@ -33,27 +33,23 @@
 				<div class="panel-block">
 					<p class="control">
 						<label class="label">Load wallet from keystore</label>
-						<input class="input" type="file" id="TK_walletKeystore"
-							placeholder="Keystore file" />
+						<input class="input" type="file" id="TK_walletKeystore" placeholder="Keystore file" />
 					</p>
 				</div>
 				<div class="panel-block">
 					<a id="TK_enterWalletDetails">Enter details instead &darr;</a>
-					<i class="has-text-danger px-4 py-2" id="TK_error"
-						style="display: none">Incorrect wallet details</i>
+					<i class="has-text-danger px-4 py-2" id="TK_error" style="display: none">Incorrect wallet details</i>
 				</div>
 				<div class="panel-block TK_walletDetails">
 					<p class="control">
 						<label class="label">Wallet Address</label>
-						<input class="input" type="text" placeholder="Wallet Address"
-							id="TK_walletDetailsAddress" />
+						<input class="input" type="text" placeholder="Wallet Address" id="TK_walletDetailsAddress" />
 					</p>
 				</div>
 				<div class="panel-block TK_walletDetails">
 					<p class="control">
 						<label class="label">Private Key</label>
-						<input class="input" type="password" placeholder="Private Key"
-							id="TK_walletDetailsPrivateKey" />
+						<input class="input" type="password" placeholder="Private Key" id="TK_walletDetailsPrivateKey" />
 					</p>
 				</div>
 				<div class="panel-block">
@@ -63,7 +59,7 @@
 					<button class="button is-danger is-fullwidth ml-1" id="TK_returnBtn">
 						Return ticket
 					</button>
-				
+
 				</div>
 			</nav>
 		</section>
@@ -74,10 +70,8 @@
 				<div class="panel-block">
 					<p class="control">
 						<label class="label">Wallet Address</label>
-						<input class="input" type="text" placeholder="Wallet address"
-							id="CB_walletAddress" />
-						<i class="has-text-danger px-4 py-2" id="CB_error"
-							style="display: none">Invalid wallet address</i>
+						<input class="input" type="text" placeholder="Wallet address" id="CB_walletAddress" />
+						<i class="has-text-danger px-4 py-2" id="CB_error" style="display: none">Invalid wallet address</i>
 					</p>
 				</div>
 
@@ -90,8 +84,7 @@
 				<div class="panel-block CB_result">
 					<p class="control">
 						<label class="label">Ticket Balance (ISETicket)</label>
-						<input class="input" type="text" id="CB_ticketResult" readonly
-							disabled />
+						<input class="input" type="text" id="CB_ticketResult" readonly disabled />
 					</p>
 				</div>
 
@@ -108,33 +101,27 @@
 				<div class="panel-block">
 					<p class="control">
 						<label class="label">Password</label>
-						<input class="input" type="password" placeholder="Wallet password"
-							id="CW_walletPassword" />
-						<i class="has-text-danger px-4 py-2" id="walletPasswordError"
-							style="display: none">Password must be at
+						<input class="input" type="password" placeholder="Wallet password" id="CW_walletPassword" />
+						<i class="has-text-danger px-4 py-2" id="walletPasswordError" style="display: none">Password must be at
 							least 8 characters long</i>
 					</p>
 				</div>
 				<div class="panel-block createWalletResult">
 					<p class="control">
 						<label class="label">Wallet address</label>
-						<input class="input" type="text" id="CW_walletAddress" readonly
-							disabled />
+						<input class="input" type="text" id="CW_walletAddress" readonly disabled />
 					</p>
 				</div>
 				<div class="panel-block createWalletResult">
 					<p class="control">
 						<label class="label">Private key</label>
-						<input class="input" type="text" id="CW_walletPrivateKey" readonly
-							disabled />
+						<input class="input" type="text" id="CW_walletPrivateKey" readonly disabled />
 					</p>
 				</div>
 				<div class="panel-block createWalletResult">
 					<p class="control">
-						<label class="label">Keystore (<a
-								id="CW_downloadKeystore">download</a>)</label>
-						<textarea class="textarea" rows="4" id="CW_walletKeystore" readonly
-							disabled></textarea>
+						<label class="label">Keystore (<a id="CW_downloadKeystore">download</a>)</label>
+						<textarea class="textarea" rows="4" id="CW_walletKeystore" readonly disabled></textarea>
 					</p>
 				</div>
 				<div class="panel-block">
@@ -149,7 +136,7 @@
 	<button class="js-modal-trigger" data-target="modal-js-example">
 		Open JS example modal
 	</button>
-	<div class="modal is-active">
+	<div class="modal">
 		<div class="modal-background"></div>
 		<div class="modal-card">
 			<header class="modal-card-head has-background-danger">
@@ -161,7 +148,7 @@
 			</section>
 			<footer class="modal-card-foot">
 				<i>Ensure to enable JS and allow for all Web3 nodes to index your transactions
-</i>
+				</i>
 			</footer>
 		</div>
 	</div>
@@ -177,7 +164,6 @@
 			$(".TK_walletDetails").css("display", "none");
 			$("#TK_error").css("display", "none");
 			$(".CB_result").css("display", "none");
-
 			$("#CB_btn").click(function () {
 				let walletAddress = $("#CB_walletAddress").val();
 				let contract = new web3.eth.Contract(ABI, contractAddress);
