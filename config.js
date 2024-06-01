@@ -1,5 +1,5 @@
-const contractAddress = "0xa3539b7fc7246396a1f07382d2625b1c4ad825e5";
-const tokenAmount = "0.00001"; // ether
+const contractAddress = "0xa3539b7fc7246396a1f07382d2625b1c4ad825e5"; // contract address (stores all the tickets)
+const tokenAmount = "0.00001"; // ether amount for 1 ticket
 
 const ABI = [
 	{

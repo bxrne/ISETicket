@@ -1,84 +1,103 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light" class="theme-light">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="assets/favicon-32x32.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="16x16"
+			href="assets/favicon-16x16.png"
+		/>
+		<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+		<link rel="manifest" href="assets/site.webmanifest" />
+		<title>Security | ISETicket</title>
+		<link rel="stylesheet" href="styles.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+	</head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <link rel="manifest" href="assets/site.webmanifest" />
-    <title>ISETicket</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-</head>
+	<body data-theme="light" class="theme-light">
+		<nav class="navbar" role="navigation" aria-label="main navigation">
+			<div class="navbar-brand p-4">
+				<a class="navbar-item" href="/index.html">
+					<img
+						src="/assets/favicon-32x32.png"
+						alt="Logo"
+						height="32px"
+						width="32px"
+					/>
+					<h4 class="is-size-4 has-text-weight-bold is-capitalized ml-2">
+						ISE Hackathons |
+						<span class="is-size-5 has-text-weight-normal is-capitalized"
+							>Security</span
+						>
+					</h4>
+				</a>
+			</div>
+		</nav>
+		<div class="container">
+			<section class="section" id="tickets">
+				<nav class="panel is-info">
+					<p class="panel-heading">Verify tickets</p>
 
-<body data-theme="light" class="theme-light">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand p-4">
-            <a class="navbar-item" href="/index.html">
-                <img src="/assets/favicon-32x32.png" alt="Logo" height="32px" width="32px" />
-                <h4 class="is-size-4 has-text-weight-bold is-capitalized ml-2">
-                    ISE Hackathons |
-                    <span class="is-size-5 has-text-weight-normal is-capitalized">Security</span>
-                </h4>
-            </a>
-        </div>
-    </nav>
-    <div class="container">
+					<div class="panel-block">
+						<p class="control">
+							<label class="label">Wallet Address</label>
+							<input
+								class="input"
+								type="text"
+								placeholder="Wallet Address"
+								id="walletAddress"
+							/>
+						</p>
+					</div>
 
-        <section class="section" id="tickets">
-            <nav class="panel is-info">
-                <p class="panel-heading">Verify tickets</p>
+					<div class="panel-block" id="result">
+						<p class="control">
+							<label class="label">Ticket balance</label>
+							<input
+								class="input"
+								type="text"
+								placeholder="Wallet Address"
+								id="balance"
+								readonly
+								disabled
+							/>
+						</p>
+					</div>
 
-                <div class="panel-block">
-                    <p class="control">
-                        <label class="label">Wallet Address</label>
-                        <input class="input" type="text" placeholder="Wallet Address" id="walletAddress" />
-                    </p>
-                </div>
+					<div class="panel-block">
+						<button class="button is-info is-fullwidth ml-1" id="verify">
+							Verify
+						</button>
+					</div>
+				</nav>
+			</section>
+		</div>
 
-                <div class="panel-block" id="result">
-                    <p class="control">
-                        <label class="label">Ticket balance</label>
-                        <input class="input" type="text" placeholder="Wallet Address" id="balance" readonly disabled />
-                    </p>
-                </div>
-        
-        
-                <div class="panel-block">
-                    <button class="button is-info is-fullwidth ml-1" id="verify">
-                        Verify
-                    </button>
-                </div>
-            </nav>
-        </section>
-     
+		<script src="config.js"></script>
+		<script>
+			$(document).ready(function () {
+				let web3 = new Web3("https://rpc2.sepolia.org");
+				let contract = new web3.eth.Contract(ABI, contractAddress);
 
-    </div>
+				$("#result").css("display", "none");
 
-    <script src="config.js"></script>
-    <script>
-        $(document).ready(function () {
-            let web3 = new Web3("https://rpc2.sepolia.org");
-            let contract = new web3.eth.Contract(ABI, contractAddress);
+				$("#verify").click(async function () {
+					let walletAddress = $("#walletAddress").val();
+					let balance = await contract.methods.balanceOf(walletAddress).call(); // non payable
 
-            $("#result").css("display", "none");
-
-            $("#verify").click(async function () {
-                let walletAddress = $("#walletAddress").val();
-                let balance = await contract.methods.balanceOf(walletAddress).call();
-                $("#balance").val(balance);
-                $("#result").css("display", "block");
-            });
-
-            
-               
-    
-      
-        });
-    </script>
-</body>
-
+					$("#balance").val(balance);
+					$("#result").css("display", "block");
+				});
+			});
+		</script>
+	</body>
 </html>
